@@ -1,0 +1,5 @@
+#!/bin/bash
+for var in $(pidof $1)
+do
+kill -9 $var
+done
