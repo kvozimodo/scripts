@@ -1,0 +1,31 @@
+#1/bin/bash
+case "$1" in
+status)
+if [pidof mongod > /dev/null]
+then
+PIDMONGO=$(pidof mongod)
+MEMORY=$( pmap $PIDMONGO | tail -n 1 | awk '/[0-9]K/{print $2}')
+PORT=$( netstat -4tnlp | awk '/\/mongod / {print $4} ')
+echo $PIDMONGO + $MEMORY + $PORT
+else
+echo "mongod is stopped"
+fi
+;;
+start)
+if [ls /apps/mongo/mongodb-linux-x86_64-rhel62-3.4.4/bin/mongod > /dev/null]
+then
+if [pidof mongod > /dev/null]
+then $0 status
+else
+/apps/mongo/mongodb-linux-x86_64-rhel62-3.4.4/bin/mongod
+echo "$PIDMONGO is waiting for connections on port"
+fi
+fi
+;;
+stop)
+PIDMONGO=$(pidof mongod) 
+killall mongod
+echo "mongod was stopped" 
+;;
+esac
+
